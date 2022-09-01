@@ -13,7 +13,7 @@ services:
       file: docker-compose-base.yml
 
   rmt:
-    image: registry.opensuse.org/home/bjin01/branches/opensuse/templates/images/15.2/images/opensuse/rmt-server:latest
+    image: registry.opensuse.org/opensuse/rmt-server:latest
     environment:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=rmt
