@@ -42,4 +42,4 @@ services:
       - "${EXTERNAL_PORT_HTTPS}:443"
     depends_on:
       - rmt
-    entrypoint: /bin/bash -c 'nginx -g "daemon off;"'
+#    entrypoint: /bin/bash -c 'nginx -g "daemon off;"'
