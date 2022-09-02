@@ -10,30 +10,30 @@ if [ ! $? -eq 0 ]; then
 	echo "no db container found via nslookup. Exit..."
 	exit 2
 fi
-cat /etc/hosts
+#cat /etc/hosts
 
 # Now it is safe to wait for 20 sec so that db container could finish init process. Sometimes db init takes a bit time. 
 # Therefore I add below delay prior continue.
 echo "wait for 20 seconds to make sure db finished initialization."
 
 #sleep 20
-echo "Test db connection..."
-mysql --host=db --user=root --password=toor -e"quit"
-if [ $? -eq 0 ]
-then
-        echo "connecting to db was successful."
-else
-	echo "Sleep for 20seconds and will try again to connect to db."
-	echo "The reason is if db is initializing for the first time it could take a bit longer."
-	sleep 20
-	mysql --host=db --user=root --password=toor -e"quit"
-	if [ $? -eq 0 ]; then
-        	echo "connecting to db was successful."
-	else
-		echo "still not able to connect to db. Exit now..."
-		exit 2
-	fi
-fi
+#echo "Test db connection..."
+#mysql --host=db --user=root --password=toor -e"quit"
+#if [ $? -eq 0 ]
+#then
+#        echo "connecting to db was successful."
+#else
+#	echo "Sleep for 20seconds and will try again to connect to db."
+#	echo "The reason is if db is initializing for the first time it could take a bit longer."
+#	sleep 20
+#	mysql --host=db --user=root --password=toor -e"quit"
+#	if [ $? -eq 0 ]; then
+#        	echo "connecting to db was successful."
+#	else
+#		echo "still not able to connect to db. Exit now..."
+#		exit 2
+#	fi
+#fi
 
 # PV could be empty, make sure the directories exist
 mkdir -p /var/lib/rmt/public/repo
