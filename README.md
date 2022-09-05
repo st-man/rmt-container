@@ -33,7 +33,7 @@ Although [SUSE CaasP](https://www.suse.com/products/caas-platform/) is the right
  * __mariadb__ - To keep mariadb init fast the below env parameter is in place and skip timezone table load.
  ```
  environment:
-      - MYSQL_INITDB_SKIP_TZINFO=1
+      - MYSQL_INITDB_SKIP_TZINFO=-1
 ```
 * __ssl__ - this subdirectory is needed. Place your self-signed CA and rmt ssl certificate into here otherwise nginx container will fail to start. If you don't need https connection then you have to use docker-compose-without-ssl.yml file or rename this file to docker-compose.yml. If you need a helping hand for generating self-signed ssl certs try [certstrap](https://github.com/square/certstrap)
 * __docker images__ - we use opensuse built nginx, mariadb and rmt docker images. In the rmt image we added bind-utils for getting nslookup command. Changing image is ok but at your own risk. If you like just pull the images before hand:
@@ -63,3 +63,6 @@ docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
 ssh-keygen
 ssh-copy-id -i ~/.ssh/id_rsa.pub user@server
 rsync -avpgzh -e "ssh -p 22" user@serrver:/var/lib/rmt/public/* /home/_rmt/rmt-container/public/
+docker-compose exec rmt chmod -R 644 /var/lib/rmt/public
+docker-compose exec rmt chown -R _rmt:nginx /var/lib/rmt/public
+docker-compose exec rmt rmt-cli import repos /var/lib/rmt/public
