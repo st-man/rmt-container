@@ -66,3 +66,9 @@ rsync -avpgzh -e "ssh -p 22" user@serrver:/var/lib/rmt/public/* /home/_rmt/rmt-c
 docker-compose exec rmt chmod -R 644 /var/lib/rmt/public
 docker-compose exec rmt chown -R _rmt:nginx /var/lib/rmt/public
 docker-compose exec rmt rmt-cli import repos /var/lib/rmt/public
+
+curl http://RMT_SERVER/tools/rmt-client-setup --output rmt-client-setup
+sh rmt-client-setup https://RMT_SERVER/
+
+curl http://RMT_SERVER/rmt.crt --output /usr/share/pki/trust/anchors/rmt.crt
+update-ca-certificates
