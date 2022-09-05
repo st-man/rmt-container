@@ -57,7 +57,9 @@ __In order to run the application locally using docker-compose:__
 
 Feedback is always welcome!
 
-
+groupadd nginx
+useradd -G nginx _rmt
 docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
 ssh-keygen
 ssh-copy-id -i ~/.ssh/id_rsa.pub user@server
+rsync -avpgzh -e "ssh -p 22" user@serrver:/var/lib/rmt/public/* /home/_rmt/rmt-container/public/
