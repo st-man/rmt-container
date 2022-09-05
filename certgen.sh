@@ -10,6 +10,8 @@ openssl req -x509 -new -nodes -key ./ssl/rmt-ca.key -sha256 -days 1825 -out ./ss
 openssl genrsa -out ./ssl/rmt-server.key 2048
 openssl req -new -key ./ssl/rmt-server.key -out ./ssl/rmt-server.csr -config ./ssl/rmt-server.cnf
 openssl x509 -req -in ./ssl/rmt-server.csr -out ./ssl/rmt-server.crt -CA ./ssl/rmt-ca.crt -CAkey ./ssl/rmt-ca.key -passin env:CA_PWD -days 1825 -sha256 -CAcreateserial -extensions v3_server_sign -extfile ./ssl/rmt-server.cnf
+cp ./ssl/rmt-server.crt ./ssl/tls.crt
+cp ./ssl/rmt-server.key ./ssl/tls.key
 chmod 0600 ./ssl/*
 chmod 0640 ./ssl/rmt-ca.crt
 chown root:nginx ./ssl/rmt-ca.crt
