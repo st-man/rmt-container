@@ -59,3 +59,5 @@ Feedback is always welcome!
 
 
 docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
+ssh-keygen
+ssh-copy-id -i ~/.ssh/id_rsa.pub user@server
