@@ -56,3 +56,6 @@ __In order to run the application locally using docker-compose:__
 6. To test if repo is accessible open this url: http://your-host-fqdn-or-ip/repo you should see directory browsing which is empty as long as you have not synced any repo via scc.suse.com
 
 Feedback is always welcome!
+
+
+docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
