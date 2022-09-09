@@ -57,8 +57,10 @@ __In order to run the application locally using docker-compose:__
 
 Feedback is always welcome!
 
-groupadd nginx
-useradd -G nginx _rmt
+#groupadd nginx
+#useradd -G nginx _rmt
+useradd -G users -m ${rsync_username}
+
 docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
 ssh-keygen
 ssh-copy-id -i ~/.ssh/id_rsa.pub user@server
