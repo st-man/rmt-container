@@ -63,7 +63,7 @@ useradd -G users -m ${rsync_username}
 
 docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
 ssh-keygen
-ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 8129 ${rsync_user}@${rmt_host}"
+ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 44322 ${rsync_user}@${rmt_host}"
 rsync -avpgzh -e "ssh -p 22" user@serrver:/var/lib/rmt/public/* /home/_rmt/rmt-container/public/
 docker-compose exec rmt chmod -R 644 /var/lib/rmt/public
 docker-compose exec rmt chown -R _rmt:nginx /var/lib/rmt/public
