@@ -60,6 +60,7 @@ Feedback is always welcome!
 #groupadd nginx
 #useradd -G nginx _rmt
 useradd -G users -m ${rsync_username}
+sudo usermod -aG docker ${rsync_username}
 
 docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
 ssh-keygen
