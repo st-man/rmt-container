@@ -14,5 +14,5 @@ cp ./ssl/rmt-server.crt ./ssl/tls.crt
 cp ./ssl/rmt-server.key ./ssl/tls.key
 chmod 0600 ./ssl/*
 chmod 0644 ./ssl/rmt-ca.crt
-chown _rmt:nginx ./ssl/rmt-ca.crt
+#chown _rmt:nginx ./ssl/rmt-ca.crt
 #chown -R _rmt:nginx ./public
