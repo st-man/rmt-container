@@ -13,8 +13,10 @@ services:
       file: docker-compose-base.yml
 
   rmt:
-    image: registry.opensuse.org/opensuse/rmt-server:latest
+    build: .
+#    image: registry.opensuse.org/opensuse/rmt-server:latest
     environment:
+      - RMT_REMOTE_HOST=172.17.172.147
       - MYSQL_HOST=db
       - MYSQL_DATABASE=rmt
       - MYSQL_USER=rmt
@@ -26,6 +28,7 @@ services:
     volumes:
       - ./public:/var/lib/rmt/public
       - ./rmt-start.sh:/usr/local/bin/rmt-start.sh
+      - ./keys:/root/.ssh
     depends_on:
       - db
     entrypoint: /bin/bash /usr/local/bin/rmt-start.sh
