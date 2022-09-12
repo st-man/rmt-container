@@ -16,7 +16,7 @@ services:
     build: .
 #    image: registry.opensuse.org/opensuse/rmt-server:latest
     environment:
-      - RMT_REMOTE_HOST=172.17.172.147
+      - RMT_REMOTE_HOST=${RMT_REMOTE_HOST}
       - MYSQL_HOST=db
       - MYSQL_DATABASE=rmt
       - MYSQL_USER=rmt
