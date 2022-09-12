@@ -20,6 +20,15 @@ mkdir -p /var/lib/rmt/tmp
 # Set permissions
 chown -R _rmt:nginx /var/lib/rmt
 
+if [ -z "${RMT_REMOTE_HOST}" ]; then
+	echo "RMT_REMOTE_HOST not set!"
+	exit 1
+fi
+
+# Create keypair
+ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa
+ssh-keyscan -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
+
 if [ -z "${MYSQL_HOST}" ]; then
 	echo "MYSQL_HOST not set!"
 	exit 1
