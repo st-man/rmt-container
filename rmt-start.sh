@@ -27,6 +27,7 @@ fi
 
 # Create keypair
 ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa
+ssh-keygen -R ${RMT_REMOTE_HOST}
 ssh-keyscan -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
 
 if [ -z "${MYSQL_HOST}" ]; then
