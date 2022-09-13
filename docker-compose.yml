@@ -13,8 +13,12 @@ services:
       file: docker-compose-base.yml
 
   rmt:
-    build: .
-#    image: registry.opensuse.org/opensuse/rmt-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: ${RSYNC_USER}
+        HOST: ${RMT_REMOTE_HOST}
     environment:
       - RMT_REMOTE_HOST=${RMT_REMOTE_HOST}
       - MYSQL_HOST=db
