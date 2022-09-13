@@ -52,6 +52,9 @@ fi
 MYSQL_DATABASE="${MYSQL_DATABASE:-rmt}"
 MYSQL_USER="${MYSQL_USER:-rmt}"
 
+# Prevent usage originаl SCC
+echo -e "127.0.0.2       suse.com scc.suse.com" >> /etc/hosts
+
 # Create adjusted /etc/rmt.conf
 echo -e "database:\n  host: ${MYSQL_HOST}\n  database: ${MYSQL_DATABASE}\n  username: ${MYSQL_USER}\n  password: ${MYSQL_PASSWORD}" > /etc/rmt.conf
 echo -e "  adapter: mysql2\n  encoding: utf8\n  timeout: 5000\n  pool: 5\n" >> /etc/rmt.conf
