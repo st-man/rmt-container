@@ -1,16 +1,4 @@
 #!/bin/sh
-#set -e
-# I want to make sure that name resolution is working and pointing to the db instance.
-
-#zypper --non-interactive install --no-recommends openssh-clients rsync bind-utils
-
-#nslookup db
-# add the ipv4 address of db into hosts file in rmt container.
-#echo `nslookup db | grep -A2 "Non-authoritative answer:" | grep "Address:" | cut -d " " -f 2` db >> /etc/hosts
-#if [ ! $? -eq 0 ]; then
-#	echo "no db container found via nslookup. Exit..."
-#	exit 2
-#fi
 
 # PV could be empty, make sure the directories exist
 mkdir -p /var/lib/rmt/public/repo
