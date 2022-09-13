@@ -8,7 +8,7 @@ ENV RSYNC_USER=$USERNAME
 ENV RMT_REMOTE_HOST=$HOST
 
 # Add package for rsync
-RUN zypper --non-interactive install --no-recommends rsync openssh-clients cronie
+RUN zypper --non-interactive install --no-recommends rsync openssh-clients sshpass cronie
 
 # Add the jobs to cron
 RUN crontab -l | { cat; echo "* 4 * * * rsync -ave '"ssh -p 22"' --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public/ && rmt-cli import repos /var/lib/rmt/public/repo/"; } | crontab -
