@@ -29,6 +29,9 @@ if ! [ -f ~/.ssh/known_hosts ]; then
 fi
 ssh-keyscan -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
 
+# Run cron in foreground
+cron -f&
+
 # Copy public key to the remote RMT for passwordless login by cert
 sshpass -p "${USER_PASS}" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 ${RSYNC_USER}@${RMT_REMOTE_HOST}
 
