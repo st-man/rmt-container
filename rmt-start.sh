@@ -71,7 +71,7 @@ if [ "$1" == "/usr/share/rmt/bin/rails" -a "$2" == "server" ]; then
 	/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 	popd > /dev/null
         echo "Executing: catatonit -- $@"
-        exec catatonit -- "$@"
+        exec catatonit -- "$@"&
 else
 	echo "Executing: $@"
 	exec "$@"
@@ -79,7 +79,7 @@ fi
 
 if ! [ -f /var/lib/rmt/public/repo/organizations_products.json ]; then
 	echo "Sync rmt settings"
-	rsync -e "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
+	rsync -re "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import data to the local RMT"
 	rmt-cli import data /var/lib/rmt/public/repo/
