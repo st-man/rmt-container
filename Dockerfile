@@ -11,5 +11,5 @@ ENV RMT_REMOTE_HOST=$HOST
 RUN zypper --non-interactive install --no-recommends rsync openssh-clients sshpass cronie
 
 # Add the jobs to cron
-RUN crontab -l | { cat; echo "* 4 * * * rsync -ave '"ssh -p 22"' --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public/ && rmt-cli import repos /var/lib/rmt/public/repo/"; } | crontab -
+RUN crontab -l | { cat; echo "* 4 * * * rsync -aqe '"ssh -p 22"' --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public/ && rmt-cli import repos /var/lib/rmt/public/repo/"; } | crontab -
 RUN crontab -l | { cat; echo "00 00 1 * * rmt-cli systems list --all > ~/systems_'$(date +"%d-%m-%Y")'.txt && rsync -aqze '"ssh -p 22"' --remove-source-files ~/systems* ${RSYNC_USER}@${RMT_REMOTE_HOST}:~"; } | crontab -
