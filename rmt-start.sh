@@ -79,7 +79,7 @@ fi
 
 if ! [ -f /var/lib/rmt/public/repo/organizations_products.json ]; then
 	echo "Sync rmt settings"
-	rsync -e "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* ~/rmt-container/public/repo/
+	rsync -e "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import data to the local RMT"
 	rmt-cli import data /var/lib/rmt/public/repo/
