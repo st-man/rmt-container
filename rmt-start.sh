@@ -25,9 +25,20 @@ if [ -z "${RMT_REMOTE_HOST}" ]; then
 	exit 1
 fi
 
-# Create keypair
-ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa
-ssh-keygen -R ${RMT_REMOTE_HOST}
+if [ -z "${RSYNC_USER}" ]; then
+	echo "RSYNC_USER not set!"
+	exit 1
+fi
+
+# Create keypair if not exist yet
+if ! [ -f ~/.ssh/id_rsa ]; then
+	ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa
+fi
+
+# Create/update known_hosts
+if ! [ -f ~/.ssh/known_hosts ]; then
+	ssh-keygen -R ${RMT_REMOTE_HOST}
+fi
 ssh-keyscan -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
 
 if [ -z "${MYSQL_HOST}" ]; then
@@ -67,4 +78,20 @@ if [ "$1" == "/usr/share/rmt/bin/rails" -a "$2" == "server" ]; then
 else
 	echo "Executing: $@"
 	exec "$@"
+fi
+
+if ! [ -f /var/lib/rmt/public/repo/organizations_products.json ]; then
+	echo "Sync rmt settings"
+	rsync -e "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* ~/rmt-container/public/repo/
+	chown -R _rmt:nginx /var/lib/rmt/public/
+	echo "Import data to the local RMT"
+	rmt-cli import data /var/lib/rmt/public/repo/
+fi
+
+if ! [ -d /var/lib/rmt/public/repo/SUSE/Products ]; then
+	echo "Sync repos (first time maybe too long)"
+	rsync -aqe "ssh -p 22" --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public
+	chown -R _rmt:nginx /var/lib/rmt/public/
+	echo "Import repos to the local RMT"
+	rmt-cli import repos /var/lib/rmt/public/repo/
 fi
