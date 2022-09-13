@@ -21,6 +21,8 @@ services:
         HOST: ${RMT_REMOTE_HOST}
     environment:
       - RMT_REMOTE_HOST=${RMT_REMOTE_HOST}
+      - RSYNC_USER=${RSYNC_USER}
+      - USER_PASS=${USER_PASS}
       - MYSQL_HOST=db
       - MYSQL_DATABASE=rmt
       - MYSQL_USER=rmt
