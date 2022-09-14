@@ -70,6 +70,8 @@ if [ "$1" == "/usr/share/rmt/bin/rails" -a "$2" == "server" ]; then
 	pushd /usr/share/rmt > /dev/null
 	/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 	popd > /dev/null
+	echo "Executing: catatonit -- $@"
+        exec catatonit -- "$@"
 else
 	echo "Executing: $@"
 	exec "$@"
@@ -89,12 +91,4 @@ if ! [ -d /var/lib/rmt/public/repo/SUSE/Products ]; then
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import repos to the local RMT"
 	rmt-cli import repos /var/lib/rmt/public/repo/
-fi
-
-if [ "$1" == "/usr/share/rmt/bin/rails" -a "$2" == "server" ]; then
-        echo "Executing: catatonit -- $@"
-        exec catatonit -- "$@"
-else
-	echo "Executing: $@"
-	exec "$@"
 fi
