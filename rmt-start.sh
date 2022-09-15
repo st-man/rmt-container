@@ -94,6 +94,8 @@ if ! [ -d /var/lib/rmt/public/repo/SUSE/Products ]; then
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import repos to the local RMT"
 	rmt-cli import repos /var/lib/rmt/public/repo/
+	echo "Delete empty folders"
+	find /var/lib/rmt/public/repo/ -type d -empty -delete
 fi
 
 if [ "$1" == "/usr/share/rmt/bin/rails" -a "$2" == "server" ]; then
