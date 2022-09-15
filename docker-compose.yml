@@ -2,7 +2,7 @@ version: '2'
 
 services:
   db:
-    image: registry.opensuse.org/opensuse/mariadb:latest
+    image: suseru/mariadb:10.8.3
     environment:
       - MYSQL_INITDB_SKIP_TZINFO=1
     restart: always
@@ -13,7 +13,7 @@ services:
       file: docker-compose-base.yml
 
   rmt:
-    build: .
+    image: suseru/rmt-airgap:2.9
     environment:
       - RMT_REMOTE_HOST=${RMT_REMOTE_HOST}
       - RSYNC_USER=${RSYNC_USER}
@@ -35,7 +35,7 @@ services:
     entrypoint: /bin/bash /usr/local/bin/rmt-start.sh
 
   nginx:
-    image: registry.opensuse.org/opensuse/nginx:latest
+    image: suseru/nginx:1.23.1
     volumes:
       - ./public:/usr/share/rmt/public
       - ./ssl:/etc/rmt/ssl
@@ -46,4 +46,3 @@ services:
       - "${EXTERNAL_PORT_HTTPS}:443"
     depends_on:
       - rmt
-#    entrypoint: /bin/bash -c 'nginx -g "daemon off;"'
