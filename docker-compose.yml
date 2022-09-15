@@ -13,12 +13,7 @@ services:
       file: docker-compose-base.yml
 
   rmt:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        USERNAME: ${RSYNC_USER}
-        HOST: ${RMT_REMOTE_HOST}
+    build: .
     environment:
       - RMT_REMOTE_HOST=${RMT_REMOTE_HOST}
       - RSYNC_USER=${RSYNC_USER}
