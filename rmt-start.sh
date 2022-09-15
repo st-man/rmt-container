@@ -27,13 +27,13 @@ fi
 if ! [ -f ~/.ssh/known_hosts ]; then
 	ssh-keygen -R ${RMT_REMOTE_HOST}
 fi
-ssh-keyscan -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
+ssh-keyscan -p 44322 -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
 
 # Run cron in foreground
 cron -f&
 
 # Copy public key to the remote RMT for passwordless login by cert
-sshpass -p "${USER_PASS}" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 ${RSYNC_USER}@${RMT_REMOTE_HOST}
+sshpass -p "${USER_PASS}" ssh-copy-id -i ~/.ssh/id_rsa.pub -p 44322 ${RSYNC_USER}@${RMT_REMOTE_HOST}
 
 if [ -z "${MYSQL_HOST}" ]; then
 	echo "MYSQL_HOST not set!"
@@ -80,7 +80,7 @@ fi
 
 if ! [ -f /var/lib/rmt/public/repo/organizations_products.json ]; then
 	echo "Sync rmt settings"
-	rsync -re "ssh -p 22" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
+	rsync -re "ssh -p 44322" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import data to the local RMT"
 	rmt-cli import data /var/lib/rmt/public/repo/
@@ -88,7 +88,7 @@ fi
 
 if ! [ -d /var/lib/rmt/public/repo/SUSE/Products ]; then
 	echo "Sync repos (first time maybe too long)"
-	rsync -aqe "ssh -p 22" --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public
+	rsync -aqe "ssh -p 44322" --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public
 	chown -R _rmt:nginx /var/lib/rmt/public/
 	echo "Import repos to the local RMT"
 	rmt-cli import repos /var/lib/rmt/public/repo/
