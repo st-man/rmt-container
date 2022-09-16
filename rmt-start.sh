@@ -82,17 +82,16 @@ fi
 
 if ! [ -f /var/lib/rmt/public/repo/organizations_products.json ]; then
 	echo "Sync rmt settings"
-	rsync -re "ssh -p 44322" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/
-	chown -R _rmt:nginx /var/lib/rmt/public/
-	echo "Import data to the local RMT"
+	rsync -re "ssh -p 44322" ${RSYNC_USER}@${RMT_REMOTE_HOST}:~/rmt/* /var/lib/rmt/public/repo/ && \
+	chown -R _rmt:nginx /var/lib/rmt/public/ && \
 	rmt-cli import data /var/lib/rmt/public/repo/
 fi
 
 if ! [ -d /var/lib/rmt/public/repo/SUSE/Products ]; then
 	echo "Sync repos (first time maybe too long)"
-	rsync -aqe "ssh -p 44322" --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public
-	chown -R _rmt:nginx /var/lib/rmt/public/
-	echo "Import repos to the local RMT"
+	rsync -aqe "ssh -p 44322" --delete --exclude '*.json' ${RSYNC_USER}@${RMT_REMOTE_HOST}:/var/lib/rmt/public/* /var/lib/rmt/public && \
+	chown -R _rmt:nginx /var/lib/rmt/public/ && \
+#	echo "Import repos to the local RMT"
 	rmt-cli import repos /var/lib/rmt/public/repo/
 	echo "Delete empty folders"
 	find /var/lib/rmt/public/repo/ -type d -empty -delete
