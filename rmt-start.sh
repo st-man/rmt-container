@@ -63,7 +63,6 @@ echo -e "database:\n  host: ${MYSQL_HOST}\n  database: ${MYSQL_DATABASE}\n  user
 echo -e "  adapter: mysql2\n  encoding: utf8\n  timeout: 5000\n  pool: 5\n" >> /etc/rmt.conf
 echo -e "scc:\n  username: ${SCC_USERNAME}\n  password:  ${SCC_PASSWORD}\n  sync_systems: true\n" >> /etc/rmt.conf
 echo -e "log_level:\n  rails: info" >> /etc/rmt.conf
-echo -e "username=SCC\npassword=rmt\n" >> /etc/zypp/credentials.d/SCCcredentials
 sed -i 's/RSYNC_USER/${RSYNC_USER}/g ; s/RMT_REMOTE_HOST/${RMT_REMOTE_HOST}/g' /var/spool/cron/tabs/root
 
 
