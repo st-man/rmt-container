@@ -26,6 +26,7 @@ services:
       - MYSQL_ROOT_PASSWORD=toor
       - SCC_USERNAME=${SCC_USERNAME}
       - SCC_PASSWORD=${SCC_PASSWORD}
+      - TZ=${TZ}
     volumes:
       - ./public:/var/lib/rmt/public
       - ./rmt-start.sh:/usr/local/bin/rmt-start.sh
