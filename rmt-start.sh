@@ -27,7 +27,8 @@ fi
 if ! [ -f ~/.ssh/known_hosts ]; then
 	ssh-keygen -R ${RMT_REMOTE_HOST}
 fi
-ssh-keyscan -p 44322 -H ${RMT_REMOTE_HOST} >> ~/.ssh/known_hosts
+
+ssh-keyscan -p 44322 -H ${RMT_REMOTE_HOST} > ~/.ssh/known_hosts
 
 # Run cron in foreground
 cron -f&
