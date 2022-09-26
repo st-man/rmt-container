@@ -72,7 +72,8 @@ sh certgen.sh
 * rmt-server.key
 
 ### 3.5 Запустить контейнеры
-При первом запуске образы контейнеров будут скачаны с [hub.docker.com/repository/docker/suseru/] (https://hub.docker.com/repository/docker/suseru/), при необходимости, можно организовать локальный registry 
+Образы контейнеров будут скачаны с https://hub.docker.com/repository/docker/suseru/ 
+При необходимости, можно организовать локальный registry 
 ```bash
 # docker-compose up -d
 ```
