@@ -1,77 +1,93 @@
-# Repository Mirroring Tool (RMT - containerized) for Cloud service providers
-
-This tool allows you to mirror RPM repositories in your own private network.
-Organization (mirroring) credentials are required to mirror SUSE repositories.
-
-End-user documentation can be found in [RMT Guide](https://documentation.suse.com/sles/15-SP1/html/SLES-all/book-rmt.html).
-
-## Benefits:
-* RMT can be installed on SLES15 and higher but it takes time to install.
-* Containerized version is easier and faster to get RMT up and working. Also you can run rmt in container on other linux distros and comfortable for CSP environment.
-
-## Running with docker-compose
-Although [SUSE CaasP](https://www.suse.com/products/caas-platform/) is the right tool to run containerized workload this time we want to keep it even easier and use docker-compose.
-
-### Prerequisits:
-* SLES15SP1 or higher
-* docker engine installed e.g. zypper in -y docker
-* download and install docker-compose:
-    https://docs.docker.com/compose/install/
-    ```
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-    sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-    docker-compose --version
-    ```
-  __Cautious:__
-  Do not install docker-compose from packagehub for SLES15SP1 as the docker-compose there needs python2 and not python3 which is installed on SLES15 and higher.
- 
- __Remarks:__
- * __rmt-start.sh__ - When mariadb container starts for the first time it will init db and this process takes some time. To avoid db connect failure of rmt container a modified entrypoint script will sleep for 20 seconds followed by a db connect test. If db connect return is successful then the script will continue. 
- * __start delay__ - feel free to change the sleep time duration for your need.
- ``` sleep 20```
- * __mariadb__ - To keep mariadb init fast the below env parameter is in place and skip timezone table load.
- ```
- environment:
-      - MYSQL_INITDB_SKIP_TZINFO=-1
+# Install 
+## Create Certificate
+#### Change hostname and ip_address to your data.
+```bash
+sudo export CA_PWD="SuSE1@34"
+sudo export hostname=192.168.13.1.sslip.io
+sudo export ip_address=192.168.13.1
+sudo openssl genrsa -aes256 -passout env:CA_PWD -out ./ssl/rmt-ca.key 2048
+sudo openssl req -x509 -new -nodes -key ./ssl/rmt-ca.key -sha256 -days 1825 -out ./ssl/rmt-ca.crt -passin env:CA_PWD -config ./ssl/rmt-ca.cnf
+sudo openssl genrsa -out ./ssl/rmt-server.key 2048
+sudo openssl req -new -key ./ssl/rmt-server.key -out ./ssl/rmt-server.csr -config ./ssl/rmt-server.cnf
+sudo openssl x509 -req -in ./ssl/rmt-server.csr -out ./ssl/rmt-server.crt -CA ./ssl/rmt-ca.crt -CAkey ./ssl/rmt-ca.key -passin env:CA_PWD -days 1825 -sha256 -CAcreateserial -extensions v3_server_sign -extfile ./ssl/rmt-server.cnf
+sudo chmod 0600 ./ssl/*
+sudo chmod 0640 ./ssl/rmt-ca.crt
+sudo chown root:root ./ssl/*
 ```
-* __ssl__ - this subdirectory is needed. Place your self-signed CA and rmt ssl certificate into here otherwise nginx container will fail to start. If you don't need https connection then you have to use docker-compose-without-ssl.yml file or rename this file to docker-compose.yml. If you need a helping hand for generating self-signed ssl certs try [certstrap](https://github.com/square/certstrap)
-* __docker images__ - we use opensuse built nginx, mariadb and rmt docker images. In the rmt image we added bind-utils for getting nslookup command. Changing image is ok but at your own risk. If you like just pull the images before hand:
+## Start services
+```bash
+zypper in -y jq docker python3-docker-compose
+echo "$(jq '. += {"bip": "10.10.0.1/16", "default-address-pools": [{ "base": "10.11.0.0/16", "size": 24 }]}' /etc/docker/daemon.json)" > /etc/docker/daemon.json
+docker-compose build
+docker-compose up -d
+docker-compose down -v
 ```
-docker pull registry.opensuse.org/home/bjin01/branches/opensuse/templates/images/15.2/images/opensuse/rmt-server:latest
-docker pull registry.opensuse.org/opensuse/mariadb:latest
-docker pull registry.opensuse.org/opensuse/nginx:latest
-```
-__In order to run the application locally using docker-compose:__
+# Создание файлов для системы обновления RMT.
 
-1. Copy `.env.example` file to `.env`;
-2. Add your organization credentials to `.env` file. Mirroring credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization);
-3. Start the containers by running `docker-compose up`. Running `docker-compose up -d` will start the containers in the background;
-4. Execute commands in the container, e.g.:
-    ```bash
-    docker-compose exec rmt rmt-cli repos --help
-    ```
-    Alternatively, running `docker-compose exec rmt bash` will start the shell inside the container.
-5. The web server will be accessible at [http://your-host-fqdn-or-ip](http://your-host-fqdn-or-ip/), this URL can be used for registering clients.
-6. To test if repo is accessible open this url: http://your-host-fqdn-or-ip/repo you should see directory browsing which is empty as long as you have not synced any repo via scc.suse.com
+Для обновления RMT в Air Gap требуются следующие файлы:
 
-Feedback is always welcome!
+./organizations_orders.json - пустой
+./organizations_products.json - данные по продуктам перечисленных в organizations_subscriptions.json
+./organizations_products_unscoped.json - данные по всем продуктам, для всех пользователей одинаковые
+./organizations_repositories.json - список репозиториев с токенами
+./organizations_subscriptions.json - информация по подпискам
+./repos.json - спискок репозиториев с токенами, может быть пустой
+./suma/product_tree.json - дерево продуктов - доступно совободно, для всех пользователей одинаковое
 
-#groupadd nginx
-#useradd -G nginx _rmt
-useradd -G users -m ${rsync_username}
-sudo usermod -aG docker ${rsync_username}
+Скрипт make_db.py из файла organizations_products_unscoped.json создает промежуточную базу данных (продукты, репозитории, и т.д.).
+Скрипт make_products-v3.py из файла organizations_subscriptions.json и промежуточной базы создает файл organizations_products.json
 
-docker-compose exec rmt rmt-cli import data /var/lib/rmt/public
-ssh-keygen
-ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 44322 ${rsync_user}@${rmt_host}"
-rsync -avpgzh -e "ssh -p 22" user@serrver:/var/lib/rmt/public/* /home/_rmt/rmt-container/public/
-docker-compose exec rmt chmod -R 644 /var/lib/rmt/public
-docker-compose exec rmt chown -R _rmt:nginx /var/lib/rmt/public
-docker-compose exec rmt rmt-cli import repos /var/lib/rmt/public
+## Структура промежуточной базы данных
 
-curl http://RMT_SERVER/tools/rmt-client-setup --output rmt-client-setup
-sh rmt-client-setup https://RMT_SERVER/
+Extensions - все являются продуктами
 
-curl http://RMT_SERVER/rmt.crt --output /usr/share/pki/trust/anchors/rmt.crt
-update-ca-certificates
+* products
+	* id PRIMARY KEY
+	* name
+	* identifier
+	* former_identifier
+	* version
+	* release_type
+	* arch
+	* friendly_name
+	* friendly_version
+	* product_class
+	* cpe
+	* free
+	* description
+	* release_stage
+	* eula_url
+	* product_type
+	* shortname
+	
+* repositories
+	* id PRIMARY KEY
+	* name
+	* url
+	* distro_target
+	* description
+
+* repositories_products
+	* repository_id FOREIGN KEY
+	* product_id FOREIGN KEY
+	* enabled
+	* autorefresh
+	* installer_updates
+
+* extensions_products
+	* extension_id FOREIGN KEY
+	* product_id FOREIGN KEY
+	* recommended
+	* migration_extra
+
+* predecessors
+	* predecessor_id FOREIGN KEY
+	* product_id FOREIGN KEY
+
+* online_predecessors
+	* online_predecessor_id FOREIGN KEY
+	* product_id FOREIGN KEY
+	
+* offline_predecessors
+	* offline_predecessor_id FOREIGN KEY
+	* product_id FOREIGN KEY
