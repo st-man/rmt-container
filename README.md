@@ -41,10 +41,14 @@ zypper install docker-compose
  cd rmt-container
 ```
 ### 3.2 Изменить (ОБЯЗАТЕЛЬНО) файл .env
+RSYNC_USER="ИМЯ ПОЛЬЗОВАТЕЛЯ ДЛЯ СИНХРОНИЗАЦИИ"
+USER_PASS="ПАРОЛЬ ПОЛЬЗОВАТЕЛЯ ДЛЯ СИНХРОНИЗАЦИИ"
+TZ="Таймзона"
+Example:
 ```bash
-RSYNC_USER="ИМЯ ПОЛЬЗОВАТЕЛЯ ДЛЯ СИНХРОНИЗАЦИИ" # Example RSYNC_USER=UC2724859
-USER_PASS="ПАРОЛЬ ПОЛЬЗОВАТЕЛЯ ДЛЯ СИНХРОНИЗАЦИИ" # Example USER_PASS=6A9b500j
-TZ="Таймзона" # Example TZ=Europe/Moscow
+RSYNC_USER=UC2724859
+USER_PASS=6A9b500j
+TZ=Europe/Moscow
 ```
 ### 3.3 Заполнить правильными данными файл certgen.sh (или будут использованы значения по умолчанию)
 ```bash
