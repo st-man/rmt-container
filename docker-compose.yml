@@ -29,7 +29,6 @@ services:
       - TZ=${TZ}
     volumes:
       - ./public:/var/lib/rmt/public
-      - ./rmt-start.sh:/usr/local/bin/rmt-start.sh
       - ./keys:/root/.ssh
     depends_on:
       - db
